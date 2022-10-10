@@ -1,26 +1,44 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useEffect } from 'react'
+import './App.css'
+import PostContainer from './components/PostContainer'
+import PostContainer2 from './components/PostContainer2'
+import { useAppDispatch, useAppSelector } from './hooks/redux'
+import { fetchUsers } from './store/reducers/ActionCreators'
 
 function App() {
+  const dispatch = useAppDispatch()
+  const { error, isLoading, users } = useAppSelector(
+    (store) => store.userReducer,
+  )
+  // const some = useAppSelector((store) => store.postAPI)
+
+  useEffect(() => {
+    dispatch(fetchUsers())
+  }, [dispatch])
+
+  // useEffect(() => {
+  //   console.log(some)
+  // }, [some])
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      {isLoading && <h1>Идет загрука...</h1>}
+      {error && <h1>{error}</h1>}
+      <ul>
+        {users.map((u) => (
+          <li key={u.id}>
+            <p>{u.name}</p>
+          </li>
+        ))}
+      </ul>
+      <hr />
+      <hr />
+      <div style={{ display: 'flex' }}>
+        <PostContainer />
+        <PostContainer2 />
+      </div>
     </div>
-  );
+  )
 }
 
-export default App;
+export default App
